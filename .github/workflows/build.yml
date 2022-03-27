@@ -1,0 +1,81 @@
+name: Publish Docker image
+on:
+  release:
+    types: [released]
+jobs:
+  push_to_registry:
+    name: Push Docker image to GitHub Packages
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        feature: ["sqlite", "mysql", "postgresql", "sqlite,mysql,postgresql"]
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2     
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date '+%Y%m%d-%H%M')"      
+
+      - name: Set Feature
+        id: feature
+        run: if [[ "${{ matrix.feature }}" == "sqlite,mysql,postgresql" ]]; then echo "::set-output name=feature::"; else echo "::set-output name=feature::-${{ matrix.feature }}" ; fi
+
+      - name: Set Short SHA
+        id: vars
+        run: echo "::set-output name=sha_short::sha-$(git rev-parse --short HEAD)"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to GitHub Packages
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}  
+
+      - id: source_vaultwarden
+        uses: thebritican/fetch-latest-release@v2.0.0
+        with:
+          repo_path: dani-garcia/vaultwarden
+
+      - name: source_vaultwarden_web
+        id: source_vaultwarden_web
+        run: echo "::set-output name=webvault::v$(curl -s https://raw.githubusercontent.com/dani-garcia/vaultwarden/${{ steps.source_vaultwarden.outputs.tag_name }}/docker/Dockerfile.j2 |grep "set vault_version" |cut -d '"' -f 2)"
+
+      - name: source_bitwarden_web
+        id: source_bitwarden_web
+        run: echo "::set-output name=webvault::$(curl -s https://raw.githubusercontent.com/dani-garcia/bw_web_builds/${{ steps.source_vaultwarden_web.outputs.webvault }}/Dockerfile |egrep 'ARG VAULT_VERSION' |cut -d '=' -f 2)"
+
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/vaultwarden-${{ steps.feature.outputs.feature }}
+          tags: |
+            type=raw,value=${{ github.ref_name }}
+            type=raw,value=latest
+            type=raw,value=${{ steps.vars.outputs.sha_short }}
+          labels: |
+            tags=${{ github.ref_name }},latest,${{ steps.vars.outputs.sha_short }}
+            org.opencontainers.image.description=VaultWardenDistroless
+
+      - name: Build and Push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          build-args: |
+            VAULT_VERSION=${{ steps.source_bitwarden_web.outputs.webvault }}
+            RS_WEB_VERSION=${{ steps.source_vaultwarden_web.outputs.webvault }}
+            RS_VERSION=${{ steps.source_vaultwarden.outputs.tag_name }}
+            FEATURES=${{ matrix.feature }}
+          file: ./Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}

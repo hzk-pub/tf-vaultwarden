@@ -1,0 +1,41 @@
+name: Check Releases
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '27 22 * * *'
+
+jobs:
+  check-releae:
+    name: Check Release
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date '+%Y%m%d-%H%M')"      
+
+      - id: source_vaultwarden
+        uses: thebritican/fetch-latest-release@v2.0.0
+        with:
+          repo_path: dani-garcia/vaultwarden
+
+      - name: source_vaultwarden_web
+        id: source_vaultwarden_web
+        run: echo "::set-output name=name::$(curl -s https://raw.githubusercontent.com/dani-garcia/vaultwarden/${{ steps.source_vaultwarden.outputs.tag_name }}/docker/Dockerfile.j2 |grep "set vault_version" |cut -d '"' -f 2)"
+
+      - name: release
+        id: release
+        run: echo "::set-output name=release::$(echo $(echo "scale=2;$(echo ${{ steps.source_vaultwarden.outputs.name }} |cut -d '.' -f 1,2) + $(echo ${{ steps.source_vaultwarden_web.outputs.name }} |egrep -o '[0-9]|\.' | tr -d '\n' | cut -d '.' -f 1,2)" | bc).$(echo "scale=1;$(echo ${{ steps.source_vaultwarden.outputs.name }} |cut -d '.' -f 3) + $(echo ${{ steps.source_vaultwarden_web.outputs.name }} |egrep -o '[0-9]|\.' | tr -d '\n' | cut -d '.' -f 3)" | bc)-$(echo -n ${{ steps.source_vaultwarden_web.outputs.name }} |tail -c 1 | egrep -o '[a-z]') | sed -e 's/[[:space:]]*$//' | sed 's/-$//g')"
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        continue-on-error: true
+        with:
+          tag: "${{ steps.release.outputs.release }}"
+          name: "${{ steps.release.outputs.release }}"
+          prerelease: true
+          body: |
+            ${{ steps.source_vaultwarden.outputs.body }}
+            - Web ${{ steps.source_vaultwarden_web.outputs.name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
