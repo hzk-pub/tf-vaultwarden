@@ -56,7 +56,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: |
-            ghcr.io/${{ github.repository_owner }}/vaultwarden-${{ steps.feature.outputs.feature }}
+            ghcr.io/${{ github.repository_owner }}/vaultwarden${{ steps.feature.outputs.feature }}
           tags: |
             type=raw,value=${{ github.ref_name }}
             type=raw,value=latest
