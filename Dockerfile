@@ -28,7 +28,7 @@ ARG RS_WEB_VERSION
 
 USER root
 
-RUN git clone https://github.com/bitwarden/web.git /vault && \ 
+RUN git clone https://github.com/bitwarden/clients.git /vault && \
     cd /vault/ && \
     git checkout ${VAULT_VERSION} && \
     git submodule update --recursive --init
@@ -37,7 +37,7 @@ RUN git clone https://github.com/dani-garcia/bw_web_builds.git /rspatch && \
     cd /rspatch && \ 
     git checkout ${RS_WEB_VERSION} && \
     mv /rspatch/patches /patches && \
-    mv /rspatch/apply_patches.sh /apply_patches.sh && \
+    mv /rspatch/scripts/apply_patches.sh /apply_patches.sh && \
     chown -R node:node /patches /apply_patches.sh /vault /rspatch
 
 USER node
