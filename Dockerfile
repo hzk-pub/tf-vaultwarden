@@ -49,7 +49,8 @@ RUN bash /apply_patches.sh && find . -type f -exec sed -i 's/#175DDC/#00683C/g' 
 RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
     npm ci --legacy-peer-deps && \
     npm audit fix --legacy-peer-deps || true && \
-#    cat /vault/package.json | jq ' .scripts += {"build:oss": "webpack", "build:oss:selfhost:prod": "cross-env ENV=selfhosted NODE_ENV=production npm run build:oss", "build:bit:selfhost:prod": "cross-env ENV=selfhosted NODE_ENV=production npm run build:bit", "dist:oss:selfhost": "npm run build:oss:selfhost:prod", "deploy": "npm run dist:bit && gh-pages -d build"} '    npm run dist:oss:selfhost && \
+#    cat /vault/package.json | jq ' .scripts += {"build:oss": "webpack", "build:oss:selfhost:prod": "cross-env ENV=selfhosted NODE_ENV=production npm run build:oss", "build:bit:selfhost:prod": "cross-env ENV=selfhosted NODE_ENV=production npm run build:bit", "dist:oss:selfhost": "npm run build:oss:selfhost:prod", "deploy": "npm run dist:bit && gh-pages -d build"} '    \
+    npm run dist:oss:selfhost && \
     find build -name "*.map" -delete && \
     echo "{\"version\":\"${RS_WEB_VERSION}\"}" > build/bwrs-version.json
 
