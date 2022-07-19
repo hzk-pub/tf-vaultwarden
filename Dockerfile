@@ -35,6 +35,7 @@ RUN git clone https://github.com/bitwarden/clients.git /vault && \
 
 RUN git clone https://github.com/bitwarden/web.git /vault && \
     cd /vault/ && \
+    git checkout main && \
     git submodule update --recursive --init
 
 RUN git clone https://github.com/dani-garcia/bw_web_builds.git /rspatch && \
