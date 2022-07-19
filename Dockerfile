@@ -50,8 +50,9 @@ RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com
     npm ci --legacy-peer-deps && \
     npm audit fix --legacy-peer-deps || true && \
 #    npm run dist:oss:selfhost && \
-#    npm run webpack && \
-#    find build -name "*.map" -delete && \
+    npm i webpack && \
+    npm run webpack && \
+    find build -name "*.map" -delete && \
     echo "{\"version\":\"${RS_WEB_VERSION}\"}" > build/bwrs-version.json
 
 RUN mv build web-vault
