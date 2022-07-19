@@ -53,7 +53,7 @@ RUN bash /apply_patches.sh && find . -type f -exec sed -i 's/#175DDC/#00683C/g' 
 RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
     npm ci --legacy-peer-deps && \
     npm audit fix --legacy-peer-deps || true && \
-    npm run dist:oss:selfhost && \
+#    npm run dist:oss:selfhost && \
     find build -name "*.map" -delete && \
     echo "{\"version\":\"${RS_WEB_VERSION}\"}" > build/bwrs-version.json
 
