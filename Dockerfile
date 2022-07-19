@@ -33,8 +33,12 @@ RUN git clone https://github.com/bitwarden/clients.git /vault && \
     git checkout ${VAULT_VERSION} && \
     git submodule update --recursive --init
 
-RUN git clone https://github.com/dani-garcia/bw_web_builds.git /rspatch && \ 
-    cd /rspatch && \ 
+RUN git clone https://github.com/bitwarden/web.git /vault && \
+    cd /vault/ && \
+    git submodule update --recursive --init
+
+RUN git clone https://github.com/dani-garcia/bw_web_builds.git /rspatch && \
+    cd /rspatch && \
     git checkout ${RS_WEB_VERSION} && \
     mv /rspatch/patches /patches && \
     mv /rspatch/scripts/apply_patches.sh /apply_patches.sh && \
