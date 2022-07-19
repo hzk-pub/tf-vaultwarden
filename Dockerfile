@@ -33,10 +33,6 @@ RUN git clone https://github.com/bitwarden/clients.git /vault && \
     git checkout ${VAULT_VERSION} && \
     git submodule update --recursive --init
 
-RUN git clone https://github.com/bitwarden/web.git /test-vault && \
-    cd /test-vault/ && \
-    git submodule update --recursive --init
-
 RUN git clone https://github.com/dani-garcia/bw_web_builds.git /rspatch && \
     cd /rspatch && \
     git checkout ${RS_WEB_VERSION} && \
@@ -54,8 +50,8 @@ RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com
     npm ci --legacy-peer-deps && \
     npm audit fix --legacy-peer-deps || true && \
 #    npm run dist:oss:selfhost && \
-    npm run webpack && \
-    find build -name "*.map" -delete && \
+#    npm run webpack && \
+#    find build -name "*.map" -delete && \
     echo "{\"version\":\"${RS_WEB_VERSION}\"}" > build/bwrs-version.json
 
 RUN mv build web-vault
