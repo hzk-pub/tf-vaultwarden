@@ -30,8 +30,8 @@ USER root
 
 RUN git clone https://github.com/bitwarden/clients.git /vault && \
     cd /vault/ && \
-#    git checkout ${VAULT_VERSION} && \
-    git checkout v2.28.1 && \
+    git checkout ${VAULT_VERSION} && \
+#    git checkout v2.28.1 && \
     git submodule update --recursive --init
 
 RUN git clone https://github.com/dani-garcia/bw_web_builds.git /rspatch && \
