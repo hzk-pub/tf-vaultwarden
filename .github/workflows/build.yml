@@ -2,9 +2,9 @@ name: Publish Docker image
 on:
   release:
     types: [released]
-#  workflow_dispatch:
-#  schedule:
-#    - cron:  '27 22 * * *'
+  workflow_dispatch:
+  schedule:
+    - cron:  '27 22 * * *'
 jobs:
   push_to_registry:
     name: Push Docker image to GitHub Packages
