@@ -30,8 +30,8 @@ USER root
 
 RUN git clone https://github.com/bitwarden/clients.git /vault && \
     cd /vault/ && \
-#     git checkout ${VAULT_VERSION} && \
-    git checkout v2.28.1 && \
+    git checkout ${VAULT_VERSION} && \
+#     git checkout v2.28.1 && \
     git submodule update --recursive --init
 
 RUN git clone https://github.com/dani-garcia/bw_web_builds.git /rspatch && \
@@ -45,7 +45,8 @@ USER node
 
 WORKDIR /vault
 
-RUN bash /apply_patches.sh && find . -type f -exec sed -i 's/#175DDC/#00683C/g' {} \;
+RUN bash /apply_patches.sh
+#     && find . -type f -exec sed -i 's/#175DDC/#00683C/g' {} \;
 
 RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
     npm ci --legacy-peer-deps && \
