@@ -55,7 +55,7 @@ RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com
     find build -name "*.map" -delete && \
     echo "{\"version\":\"${RS_WEB_VERSION}\"}" > build/bwrs-version.json
 
-RUN mv build web-vault
+RUN mv apps/web/build web-vault
 
 FROM gcr.io/distroless/cc-debian11:latest
 
