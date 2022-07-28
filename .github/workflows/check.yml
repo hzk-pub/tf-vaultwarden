@@ -34,7 +34,7 @@ jobs:
         with:
           tag: "${{ steps.release.outputs.release }}"
           name: "${{ steps.release.outputs.release }}"
-          prerelease: true
+#           prerelease: true
           body: |
             ${{ steps.source_vaultwarden.outputs.body }}
             - Web ${{ steps.source_vaultwarden_web.outputs.name }}
