@@ -46,7 +46,7 @@ jobs:
 
       - name: source_vaultwarden_web
         id: source_vaultwarden_web
-        run: echo "::set-output name=webvault::v$(curl -s https://raw.githubusercontent.com/dani-garcia/vaultwarden/${{ steps.source_vaultwarden.outputs.tag_name }}/docker/Dockerfile.j2 |grep "set vault_version" |cut -d '"' -f 2)"
+        run: echo "::set-output name=webvault::$(curl -s https://raw.githubusercontent.com/dani-garcia/vaultwarden/${{ steps.source_vaultwarden.outputs.tag_name }}/docker/Dockerfile.j2 |grep "set vault_version" |cut -d '"' -f 2)"
 
       - name: source_bitwarden_web
         id: source_bitwarden_web
