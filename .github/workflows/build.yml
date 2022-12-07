@@ -75,6 +75,7 @@ jobs:
             RS_WEB_VERSION=${{ steps.source_vaultwarden_web.outputs.webvault }}
             RS_VERSION=${{ steps.source_vaultwarden.outputs.tag_name }}
             FEATURES=${{ matrix.feature }}
+            CARGO_NET_GIT_FETCH_WITH_CLI=true
           file: ./Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
