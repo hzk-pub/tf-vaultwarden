@@ -28,7 +28,7 @@ ARG RS_WEB_VERSION
 
 USER root
 
-RUN git clone https://github.com/bitwarden/web.git /vault && \ 
+RUN git clone https://github.com/bitwarden/clients.git /vault && \ 
     cd /vault/ && \
     git checkout ${VAULT_VERSION} && \
     git submodule update --recursive --init
@@ -37,7 +37,7 @@ RUN git clone https://github.com/dani-garcia/bw_web_builds.git /rspatch && \
     cd /rspatch && \ 
     git checkout ${RS_WEB_VERSION} && \
     mv /rspatch/patches /patches && \
-    mv /rspatch/apply_patches.sh /apply_patches.sh && \
+    mv /rspatch/scripts/apply_patches.sh /apply_patches.sh && \
     chown -R node:node /patches /apply_patches.sh /vault /rspatch
 
 USER node
@@ -47,11 +47,14 @@ WORKDIR /vault
 RUN bash /apply_patches.sh && find . -type f -exec sed -i 's/#175DDC/#00683C/g' {} \;
 
 RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
-    npm ci --legacy-peer-deps && \
-    npm audit fix --legacy-peer-deps || true && \
-    npm run dist:oss:selfhost && \
+    npm ci && \
+    npm audit fix || true
+
+WORKDIR /vault/apps/web
+
+RUN npm run dist:oss:selfhost && \
     find build -name "*.map" -delete && \
-    echo "{\"version\":\"${RS_WEB_VERSION}\"}" > build/bwrs-version.json
+    echo "{\"version\":\"${RS_WEB_VERSION}\"}" > build/vw-version.json
 
 RUN mv build web-vault
 
@@ -66,7 +69,7 @@ ENV ROCKET_LIMITS={json=10485760}
 ENV WEB_VAULT_ENABLED=true
 
 COPY --from=build-env /data /data
-COPY --from=web-build /vault/web-vault ./web-vault
+COPY --from=web-build /vault/apps/web/web-vault ./web-vault
 COPY --from=build-env /app/target/release/vaultwarden /
 COPY --from=build-env /libsneeded/* /usr/lib/
 
