@@ -48,6 +48,7 @@ WORKDIR /vault
 RUN bash /apply_patches.sh && find . -type f -exec sed -i 's/#175DDC/#00683C/g' {} \;
 
 RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com/ && \
+    npm config set maxsockets=5 && \
     npm ci && \
     npm audit fix || true
 
