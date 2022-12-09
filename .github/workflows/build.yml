@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        feature: ["sqlite", "mysql", "postgresql", "sqlite,mysql,postgresql"]
+        feature: ["sqlite", "mysql", "postgresql"]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2     
