@@ -38,8 +38,9 @@ RUN git clone https://github.com/dani-garcia/bw_web_builds.git /rspatch && \
     cd /rspatch && \ 
     git checkout ${RS_WEB_VERSION} && \
     mv /rspatch/patches /patches && \
+    mv /rspatch/resources /resources && \
     mv /rspatch/scripts/apply_patches.sh /apply_patches.sh && \
-    chown -R node:node /patches /apply_patches.sh /vault /rspatch
+    chown -R node:node /patches /apply_patches.sh /vault /rspatch /resources
 
 USER node
 
