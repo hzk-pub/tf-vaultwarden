@@ -1,4 +1,4 @@
-FROM rust:1.58-buster as build-env
+FROM rust:1-buster as build-env
 
 ARG FEATURES
 ARG RS_VERSION
@@ -70,7 +70,6 @@ ENV ROCKET_PORT=80
 ENV ROCKET_WORKERS=10
 ENV ROCKET_LIMITS={json=10485760}
 ENV WEB_VAULT_ENABLED=true
-ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 
 COPY --from=build-env /data /data
 COPY --from=web-build /vault/apps/web/web-vault ./web-vault
